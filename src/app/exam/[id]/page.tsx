@@ -1,10 +1,7 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
-import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Award } from 'lucide-react'
 import Link from 'next/link'
@@ -17,8 +14,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-function QuizContent() {
-  const params = useParams()
+export default function ExamQuizPage({ params }: { params: { id: string } }) {
   const examId = params.id
 
   const [exam, setExam] = useState<any>(null)
@@ -278,17 +274,5 @@ function QuizContent() {
         )}
       </div>
     </main>
-  )
-}
-
-export default function ExamQuizPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    }>
-      <QuizContent />
-    </Suspense>
   )
 }
