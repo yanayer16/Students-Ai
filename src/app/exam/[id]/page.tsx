@@ -1,13 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Award } from 'lucide-react'
 import Link from 'next/link'
-
-// 1. ADD THESE THREE IMPORTS AT THE TOP:
 import ReactMarkdown from 'react-markdown'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
@@ -17,7 +15,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function ExamQuizPage() {
+function QuizContent() {
   const params = useParams()
   const examId = params.id
 
@@ -132,7 +130,6 @@ export default function ExamQuizPage() {
               </div>
             </div>
 
-            {/* 2. WRAP THE QUESTION TEXT WITH REACT-MARKDOWN */}
             <div className="text-xl font-semibold text-slate-100 mb-6 leading-relaxed dir-auto">
               <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
                 {currentQ.question_text}
@@ -165,7 +162,6 @@ export default function ExamQuizPage() {
                     disabled={isChecked}
                     className={`w-full text-left p-4 rounded-2xl border transition-all flex items-center justify-between ${optionStyle} cursor-pointer`}
                   >
-                    {/* 3. WRAP THE OPTION TEXT WITH REACT-MARKDOWN */}
                     <span className="text-sm font-medium dir-auto">
                       <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
                         {opt}
@@ -196,7 +192,6 @@ export default function ExamQuizPage() {
                       ? '🎉 Correct!'
                       : `❌ Incorrect. The correct answer is: ${currentQ.correct_answer}`}
                   </p>
-                  {/* 4. WRAP THE EXPLANATION TEXT WITH REACT-MARKDOWN */}
                   <div className="text-xs text-slate-300 leading-relaxed mt-1 dir-auto">
                     <span className="font-semibold">Explanation: </span>
                     <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
@@ -281,5 +276,17 @@ export default function ExamQuizPage() {
         )}
       </div>
     </main>
+  )
+}
+
+export default function ExamQuizPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <QuizContent />
+    </Suspense>
   )
 }
