@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Award } from 'lucide-react'
@@ -14,8 +14,10 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function ExamQuizPage({ params }: { params: { id: string } }) {
-  const examId = params.id
+export default function ExamQuizPage({ params }: { params: Promise<{ id: string }> }) {
+  // Unwrap params safely using React.use() for Next.js 15+ / 16 compatibility
+  const resolvedParams = use(params)
+  const examId = resolvedParams.id
 
   const [exam, setExam] = useState<any>(null)
   const [questions, setQuestions] = useState<any[]>([])
